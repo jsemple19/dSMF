@@ -3,7 +3,7 @@
 # takes list of genes for which primers were designed on X chr and assigns them to quantiles of
 # L3 gene expression in order to match to autosomal genes 
 
-setwd("/media/jenny/670FC52648FA85C4/Documents/MeisterLab/dSMF/PromoterPrimerDesign/scripts")
+setwd("/home/jenny/Documents/MeisterLab/dSMF/PromoterPrimerDesign/scripts")
 
 #read in genes selected from ChrX
 chosenX<-read.csv("./XdcPrimers/DM_DE_promoter_test_primers_WS250_subset.csv",header=TRUE,stringsAsFactors=FALSE)
@@ -23,7 +23,7 @@ wormG<-read.csv("../../expressionMatching/Gene_expression_Gerstein_combined.csv"
 sum(is.na(wormG$Gene))
 
 #convert gene names to wb gene ids
-source("/media/jenny/670FC52648FA85C4/Documents/MeisterLab/GenomeVer/geneNameConversion/convertingGeneNamesFunction.R")
+source("/home/jenny/Documents/MeisterLab/GenomeVer/geneNameConversion/convertingGeneNamesFunction.R")
 conversionTable<-convertGeneNames(wormG$Gene,inputType="wormbase_gene_seq_name")
 
 i<-match(conversionTable$wormbase_gene_seq_name,wormG$Gene)
@@ -166,3 +166,33 @@ primerTable<-data.frame("primerNames"=c(paste0("X",1:48,"_f"),paste0("A",1:48,"_
       "seq"=c(primerData$Fwseq,primerData$Rvseq))
       
 write.csv(primerTable,"primerSeqs2order.csv",row.names=FALSE,quote=FALSE)
+
+
+#### get length of Amplicons to check PCR results
+AmpliconLengths<-data.frame("primerNames"=c(paste0("X",1:48,"_f"),paste0("A",1:48,"_f"), paste0("X",1:48,"_r"), paste0("A",1:48,"_r")),
+                               "seq"=c(primerData$Fwseq,primerData$Rvseq),"amplicon"=c(primerData$Amplicon,primerData$Amplicon),
+                               "rowNum"=rep(rep(c("A","B","C","D","E","F","G","H"), each=12),2),"colNum"=rep(rep(1:12,8),2))
+startEnd<-sapply(strsplit(as.character(primerTableLengths$ampliconLength),":",fixed=T), '[[',2)
+start<-as.numeric(sapply(strsplit(startEnd,"-",fixed=T), '[[',1))
+end<-as.numeric(sapply(strsplit(startEnd,"-",fixed=T), '[[',2))
+AmpliconLengths["width"]<-end-start
+
+AmpliconLengths<-AmpliconLengths[c(1:96),]
+AmpliconLengths
+
+
+interleave<-function(v1,v2) {
+   ord1<-2*(1:length(v1))-1
+   ord2<-2*(1:length(v2))
+   c(v1,v2)[order(c(ord1,ord2))]
+}
+
+printColPair<-function(data,col1,col2) {
+   r1=data[data$colNum==col1,]
+   r2=data[data$colNum==col2,]
+   out<-interleave(r1$width[order(r1$rowNum,decreasing=T)],r2$width[order(r2$rowNum,decreasing=T)])
+   names(out)<-rep(r1$rowNum[order(r1$rowNum,decreasing=T)],each=2)
+   return(out)
+}
+
+printColPair(AmpliconLengths,11,12)
