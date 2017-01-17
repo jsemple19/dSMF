@@ -34,7 +34,7 @@ wormG<-cbind(conversionTable,wormG[i,])
 expressed<-wormG[wormG$L3_N2_L3.1>0,]
 #determine the cutoffs for gene expression to define deciles in this dataset
 qt<-quantile(expressed$L3_N2_L3.1,probs=seq(0,1,0.1))
-#ranks<-sapply(expressed$L3_N2_L3.1,function(x) {max(which(x>qt))})
+ranks<-sapply(expressed$L3_N2_L3.1,function(x) {max(which(x>qt))})
 
 ### now look at the distribution of my chosen genes on X among the deciles:
 #filter table for genes with primers on X
@@ -49,6 +49,10 @@ table(ranksX)
 ######new:
 # decile:         3  4  5  6  7  8  9 10 
 #number of genes: 2  4  5  8  8  3  2 16 
+
+x<-barplot(table(ranksX),xlab="quantile of gene expression",ylab="number of genes",ylim=c(0,17),
+           main="Distribution in expression quantiles of chosen X chromosome genes")
+text(x,table(ranksX)+0.5,labels=table(ranksX))
 
 ### now see which deciles the autosomal genes fall into
 
@@ -68,6 +72,12 @@ table(ranksA)
 ###########new:
 #decile:           -Inf    1    2    3    4    5    6    7    8    9   10 
 #number of genes:    14   29   51   48   93  111  151  172  233  257  352 
+
+x<-barplot(table(ranksA)[2:11],xlab="quantile of gene expression",ylab="number of genes",
+           ylim=c(0,375),main="Distribution in expression quantiles of autosomal genes with primers")
+
+text(x,table(ranksA)[2:11]+11,labels=table(ranksA)[2:11])
+
 
 #save the ranks into the primer design table
 chosenA<-cbind("decile"=ranksA,chosenA)
@@ -179,6 +189,7 @@ AmpliconLengths["width"]<-end-start
 
 AmpliconLengths<-AmpliconLengths[c(1:96),]
 AmpliconLengths
+(8+10+9+6+9+11)/96
 
 
 interleave<-function(v1,v2) {

@@ -1,4 +1,5 @@
 #2016-11-16
+# converTSSdata2WS235.R
 # convert supplemental tables from Kreus(2013) and Chen(2013). Column titles were changed in the tables
 # to remove spaces. Removed empty columns in Kreus data. Used convertingGeneNames.R on Chen data to add 
 # WBGeneXXXXXX gene names to the excel table. 

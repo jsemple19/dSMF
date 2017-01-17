@@ -1,7 +1,7 @@
 # findDCCgenes.R
 # 2016-12-22
 # produces lists of genes that are either dosage compensated or not, according to several criteria
-setwd("/media/jenny/670FC52648FA85C4/Documents/MeisterLab/dSMF/DCgenes/scripts")
+setwd("/home/jenny/Documents/MeisterLab/dSMF/DCgenes/scripts")
 
 library(data.table)
 # using suplemental table 3 from Kramer ... Ercan et al. PlotGen (2015) 
@@ -12,7 +12,7 @@ library(data.table)
 # or L3 stage dpy-27 mutant vs control (A: no change, X: upregulated mutant)
 
 #load DC gene list from Julie's RNAseq data
-JulieDCC<-read.table("/media/jenny/670FC52648FA85C4/Documents/MeisterLab/otherPeopleProjects/Julie_RNAseq/DCCgenes_JulieRNAseq.xls",
+JulieDCC<-read.table("/home/jenny/Documents/MeisterLab/otherPeopleProjects/Julie_RNAseq/DCCgenes_JulieRNAseq.xls",
                      stringsAsFactors=FALSE)
 
 expn<-read.csv("../dataSets/Kramer2015/Kramer2015_S3_File_DEseq2results.csv",
@@ -33,7 +33,7 @@ library(genomation)
 library(GenomicRanges)
 library(rtracklayer)
 
-annotFile<-"/SharedDocuments/MeisterLab/GenomeVer/annotations/c_elegans.PRJNA13758.WS250.annotations.gff3.gz"
+annotFile<-"/home/jenny/Documents/MeisterLab/GenomeVer/annotations/c_elegans.PRJNA13758.WS250.annotations.gff3.gz"
 genomeVer="WS250"
 
 txdb<-makeTxDbFromGFF(annotFile,format="auto",dataSource="WormBase",organism="Caenorhabditis elegans")
