@@ -207,3 +207,34 @@ printColPair<-function(data,col1,col2) {
 }
 
 printColPair(AmpliconLengths,11,12)
+
+### make final list of chosen ############
+chosenX<-read.csv("./XdcPrimers/DM_DE_promoter_test_primers_WS250_subset.csv",header=TRUE,stringsAsFactors=FALSE)
+chosenX<-chosenX[chosenX$finalSelected=="y",]
+#names(chosenX)<-c(names(chosenX)[1],"fragID",names(chosenX)[2:18])
+#names(chosenX)[5]<-"Amplicon"
+names(chosenX)[6]<-"orientation"
+
+
+finalChosenA<-read.csv("./AdcPrimers/DM_DE_promoter_test_primers_WS250_withRanks_subset.csv",
+                       header=TRUE,stringsAsFactors=FALSE)
+finalChosenA<-finalChosenA[finalChosenA$finalSelected=="y",]
+names(finalChosenA)[6]<-"NameFromBEDfile"
+names(chosenX)[2]<-"fragID"
+#names(finalChosenA)[5]<-"PrimerID"
+names(finalChosenA)[7]<-"Amplicon"
+
+chosenX<-data.frame(chosenX[,c(1:2)],"decile"=ranksX,chosenX[,c(3:19)])
+finalChosenA<-finalChosenA[,c(1:4,6,7,5,8:20)]
+
+chosen<-rbind(chosenX,finalChosenA)
+
+primerNames=paste0(c(paste0("X",1:48,"_f"),paste0("A",1:48,"_f")), "_&_",c(paste0("X",1:48,"_r"), paste0("A",1:48,"_r")))
+
+chosen<-data.frame(primerNames,chosen[,c(2:20)])
+
+source("/home/jenny/Documents/MeisterLab/GenomeVer/geneNameConversion/convertingGeneNamesFunction.R")
+conversionTable<-convertGeneNames(chosen$Gene_WB_ID,inputType="wormbase_gene")
+
+chosen<-data.frame(chosen[,c(1:3)],"publicID"=conversionTable[,1],chosen[,c(4:20)])
+write.csv(chosen,"finalChosenList.csv",quote=FALSE,row.names=FALSE)

@@ -139,6 +139,8 @@ Ad_hermVmixd_X<-expn_X[complete.cases(expn_X[,c("hermaphrodite_mixed_sex_young_a
 Ad_hermVmixd_X<-Ad_hermVmixd_X[Ad_hermVmixd_X[,"hermaphrodite_mixed_sex_young_adult_padj"]>0.05 & 
                          abs(Ad_hermVmixd_X[,"hermaphrodite_mixed_sex_young_adult_log2_fold_change"])<log2(2),]
 #1703 genes
+#of these 1528 already in L3_hermVmixd_X), i.e. 175 new genes
+
 pubDCgenes %in% Ad_hermVmixd_X$Gene_WB_ID
 # all but 4th
 
