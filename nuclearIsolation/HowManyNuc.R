@@ -31,6 +31,13 @@ NumMillionNuc<-NumNuc/1e+6
 NumMillionNuc
 
 
+# how many diploid genomes (nuclei) do you need for 1 ug of DNA?
+NumNuc1ug<-1/diploidGenome_ug
+NumNuc1ug
+
+# express in millions of nuclei
+NumMillionNuc1ug<-NumNuc1ug/1e+6
+NumMillionNuc1ug
 
 ########################
 # 1 ug of 1000 bp DNA = 9.1x 10^11 molecules
@@ -43,6 +50,9 @@ CeGenomeWt<- 100 *Wt1Mb*2
 CeGenomeWt
 5/CeGenomeWt/1e6
 #23 million nuclei for 5 ug
+1/CeGenomeWt/1e6
+#4.55 million nulei for 1 ug
+
 
 HumanGenomeWt<-3000*Wt1Mb*2
 HumanGenomeWt
@@ -62,3 +72,15 @@ flyGenomeWt*2.5e6
 cellNum=250000
 cellNum*HumanGenomeWt
 
+
+############################33
+
+countSmallSq<-20
+countBigSq<-countSmallSq*25
+countInUL<-countBigSq*10
+volumeSample<-100 #ul
+dilutionForCount<- 100 #1 ul in 100ul
+dilutionWithDapi<- 1.33 #15ul sample + 5 ul DAPI
+
+TotalNuclei<-countInUL*volumeSample*dilutionForCount*dilutionWithDapi
+TotalNuclei/1e6
