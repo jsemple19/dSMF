@@ -340,24 +340,38 @@ for (i in 1:length(maxol)){
 }
 
 
-###################################
+################################### save the data to files GR in RDS, bed and text
 mcols(maxol)<-DataFrame(chenTSS=chenTSS,kruesiTSS=kreusTSS,saitoTSS=saitoTSS,maxTSS=maxTSS, most5p=most5p)
 
-saveRDS(maxol,"ChenKreusSaitoTSS_2827.RDS")
-export.bed(maxol,"ChenKreusSaitoTSS_2827.bed")
+saveRDS(maxol,"ChenKreusSaitoTSS_2827_regionGR.RDS")
+export.bed(maxol,"ChenKreusSaitoTSS_2827_region.bed")
+maxol_maxTSS<-maxol
+start(maxol_maxTSS)<-mcols(maxol)$maxTSS
+end(maxol_maxTSS)<-mcols(maxol)$maxTSS
+saveRDS(maxol_maxTSS,"ChenKreusSaitoTSS_2827_maxTSSGR.RDS")
+export.bed(maxol_maxTSS,"ChenKreusSaitoTSS_2827_maxTSS.bed")
+maxol_most5pTSS<-maxol
+start(maxol_most5pTSS)<-mcols(maxol)$most5p
+end(maxol_most5pTSS)<-mcols(maxol)$most5p
+saveRDS(maxol_most5pTSS,"ChenKreusSaitoTSS_2827_most5pGR.RDS")
+export.bed(maxol_most5pTSS,"ChenKreusSaitoTSS_2827_most5pTSS.bed")
+
+
 WBGeneID<-names(maxol)
 chr<-seqnames(maxol)
-start<-start(maxol)
-end<-end(maxol)
+start<-start(maxol_maxTSS)
+end<-end(maxol_maxTSS)
 strand<-strand(maxol)
 df<-data.frame(WBGeneID=WBGeneID,chr=chr,start=start,end=end,strand=strand,mcols(maxol))
-write.table(df,"ChenKreusSaitoTSS_2827.txt",row.names=FALSE,col.names=TRUE)
+write.table(df,"ChenKreusSaitoTSS_2827_maxTSS.txt",row.names=FALSE,col.names=TRUE)
 sum(rowSums(abs(df[,6:10]-df$maxTSS))<5,na.rm=TRUE)
 #1053
 sum(rowSums(abs(df[,6:10]-df$maxTSS))<1,na.rm=TRUE)
 #872
 highConfidence<-na.omit(df[rowSums(abs(df[,6:10]-df$maxTSS))<1,])
 write.table(highConfidence,"ChenKreusSaitoTSS_highConf_872.txt",row.names=FALSE,col.names=FALSE)
+start<-start(maxol_maxTSS)
+end<-end(maxol_maxTSS)
 highConfidence_GR<-with(highConfidence, GRanges(seqnames=chr,ranges=IRanges(start=start,end=end),strand=strand))
 names(highConfidence_GR)<-highConfidence$WBGeneID
 mcols(highConfidence_GR)<-highConfidence[6:10]
