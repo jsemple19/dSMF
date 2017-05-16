@@ -1,4 +1,4 @@
-# 2017-05-02 
+# 2017-05-02
 # modified to get modes of TSSs after seeing alignments with motifs are wrong
 # 2016-11-17
 # getTSS.R
@@ -24,7 +24,7 @@ TSScols<-c("DCCmutantEmbryo_TSS","WildTypeEmbryo_TSS","WildTypeStarvedL1_TSS","W
 TSSpos<-as.data.frame(mcols(KreusTSS)[,TSScols][,1:4])
 #calculate the SD of the TSS position
 TSS_sd<-apply(TSSpos,1,sd,na.rm=TRUE)
-# if only in one dataset, output is NA. If identical in two, output is 0.0000. Looking at histograme - maybe 
+# if only in one dataset, output is NA. If identical in two, output is 0.0000. Looking at histograme - maybe
 # use cutoff of SD=20
 hist(TSS_sd,breaks=100,main="Std dev of TSS position (Kreus 2013)",xlab="SD of TSS")
 hist(TSS_sd,breaks=10000,xlim=c(0,30),main="Std dev of TSS position (Kreus 2013)",xlab="SD of TSS")
@@ -91,8 +91,8 @@ ChenTSS<-ChenTSS[-which(is.na(mcols(ChenTSS)$WbgeneName)),]
 
 hist(width(ChenTSS),breaks=100)
 quantile(width(ChenTSS),c(0.90,0.95,0.99))
-# 90%    95%    99% 
-# 107.00 135.00 196.63 
+# 90%    95%    99%
+# 107.00 135.00 196.63
 sum(width(ChenTSS)<=100)/length(width(ChenTSS))
 # 0.8830272
 sum(width(ChenTSS)<=150)/length(width(ChenTSS))
@@ -129,13 +129,13 @@ hist(apply(cbind(start(KreusTSS_ol1),mcols(ChenTSS_ol)$modePosition),1,sd),break
 KreusTSS_ol<-KreusTSS_ol1
 
 #take only ranges where the TSS is no further than 50 bp
-KreusTSS_ol1<-KreusTSS_ol[(start(KreusTSS_ol)-mcols(ChenTSS_ol)$modePosition)>=-50 & 
+KreusTSS_ol1<-KreusTSS_ol[(start(KreusTSS_ol)-mcols(ChenTSS_ol)$modePosition)>=-50 &
                             (start(KreusTSS_ol)-mcols(ChenTSS_ol)$modePosition)<=50,]
 
 #2938 if use -50 to 50
 
 #do this on chen data too to preserve metadata
-ChenTSS_ol1<-ChenTSS_ol[(start(KreusTSS_ol)-mcols(ChenTSS_ol)$modePosition)>=-50 & 
+ChenTSS_ol1<-ChenTSS_ol[(start(KreusTSS_ol)-mcols(ChenTSS_ol)$modePosition)>=-50 &
                             (start(KreusTSS_ol)-mcols(ChenTSS_ol)$modePosition)<=50,]
 
 
@@ -152,11 +152,11 @@ ChenTSS_ol1<-ChenTSS_ol1[-i,]
 # 2829 ranges if -50 to 50
 
 table(seqnames(ChenTSS_ol1))
-# chrI  chrII chrIII  chrIV   chrV   chrX 
-# 419    411    377    384    521    364 
+# chrI  chrII chrIII  chrIV   chrV   chrX
+# 419    411    377    384    521    364
 # for -50 to 0
 
-#chrI  chrII chrIII  chrIV   chrV   chrX 
+#chrI  chrII chrIII  chrIV   chrV   chrX
 #471    478    433    442    589    416
 # for -50 to 50
 
@@ -253,15 +253,15 @@ maxolseqs<-getSeq(BSgenome.Celegans.UCSC.ce11,wb2ucsc(maxol))
 # dtrack4<-DataTrack(range=kreusRbw,type="histogram",name="Kruesi R")
 # dtrack5<-DataTrack(range=saitoFbw,type="histogram",name="Saito F")
 # dtrack6<-DataTrack(range=saitoRbw,type="histogram",name="Saito R")
-# 
-# 
+#
+#
 # txdb<-makeTxDbFromGFF("../../../GenomeVer/annotations/c_elegans.PRJNA13758.WS250.annotations.gff3")
 # GeneRegionTrack(txdb)
 # txTr<-GeneRegionTrack(txdb,showFeatureId=TRUE,name="txdb")
 # #genes<-genes(txdb)
 # #plotTracks(txTr)
 # #feature(txTr)
-# 
+#
 # getMotifAnnotationTrack<-function(motif,DNAseq,gr) {
 #    matches<-matchPWM(motif,DNAseq)
 #    if(length(matches)==0) {
@@ -277,7 +277,7 @@ maxolseqs<-getSeq(BSgenome.Celegans.UCSC.ce11,wb2ucsc(maxol))
 #    #print(genomeCoord_gr)
 #    return(atrack)
 # }
-# 
+#
 # pdf("./allPromoterTSS&inr_271_.pdf",width=6,height=6)
 # #par(mfrow=c(2,2))
 # #layout(matrix(c(1,2,3,4),nrow=2,byrow=TRUE))
@@ -286,7 +286,7 @@ maxolseqs<-getSeq(BSgenome.Celegans.UCSC.ce11,wb2ucsc(maxol))
 #    #find inr motifs in this region
 #    atrack_inr<-getMotifAnnotationTrack(inr,maxolseqs[[i]],maxol[i])
 #    #atrack_tata<-getMotifAnnotationTrack(tata,maxolseqs[[i]],maxol[i])
-#    
+#
 #    #check which strand the gene is on for different TSS counts
 #    if(as.character(strand(maxol[i]))=="+") {
 #       ol<-subsetByOverlaps(uF,maxol[i])
@@ -305,7 +305,7 @@ maxolseqs<-getSeq(BSgenome.Celegans.UCSC.ce11,wb2ucsc(maxol))
 #    }
 # }
 # dev.off()
-# 
+#
 
 
 
@@ -339,16 +339,7 @@ for (i in 1:length(maxol)){
    }
 }
 
-############## error catching funciton for NAs when no TSS data
-getStartTSS<-function(modes,dataName) {
-   result<-tryCatch( 
-   {
-      start(ol[modes[dataName]])
-   }, error=function(cond) {
-      return(NA)
-   })
-   return(result)
-}
+
 ###################################
 mcols(maxol)<-DataFrame(chenTSS=chenTSS,kruesiTSS=kreusTSS,saitoTSS=saitoTSS,maxTSS=maxTSS, most5p=most5p)
 
@@ -360,7 +351,7 @@ start<-start(maxol)
 end<-end(maxol)
 strand<-strand(maxol)
 df<-data.frame(WBGeneID=WBGeneID,chr=chr,start=start,end=end,strand=strand,mcols(maxol))
-write.table(df,"ChenKreusSaitoTSS_2827.txt",row.names=FALSE,col.names=FALSE)
+write.table(df,"ChenKreusSaitoTSS_2827.txt",row.names=FALSE,col.names=TRUE)
 sum(rowSums(abs(df[,6:10]-df$maxTSS))<5,na.rm=TRUE)
 #1053
 sum(rowSums(abs(df[,6:10]-df$maxTSS))<1,na.rm=TRUE)
@@ -377,26 +368,12 @@ saveRDS(highConfidence_GR,"ChenKreusSaitoTSS_highConf_872.RDS")
 library(BSgenome.Celegans.UCSC.ce11)
 library(Biostrings)
 
-# function to create FASTA files of DNA seqs with window around TSS
-fastaFromGR<-function(gr,TSS,upstream,downstream,outputFile) {
-   start(gr)<-ifelse(as.character(strand(gr))=="+",TSS-upstream,TSS-downstream)
-   end(gr)<-ifelse(as.character(strand(gr))=="+",TSS+downstream,TSS+upstream)
-   gr<-wb2ucsc(gr)
-   TSSseqs<-getSeq(BSgenome.Celegans.UCSC.ce11,gr)
-   writeXStringSet(TSSseqs[1],outputFile)
-   for(i in 2:length(TSSseqs)) {
-      seqName<-names(TSSseqs)[i]
-      writeXStringSet(TSSseqs[i],outputFile,append=TRUE)
-   }
-   return(gr)
-}
-
 # get sequences for all not-too-variable TSSs
 maxTSS<-fastaFromGR(granges(maxol),mcols(maxol)$maxTSS,150,150,"./allTSSmax_-150_150.fa")
 most5pTSS<-fastaFromGR(granges(maxol),mcols(maxol)$most5p,150,150,"./allTSSmost5p_-150_150.fa")
 
 sum(start(maxTSS)==start(most5pTSS)) #1805 are the same
-sum(abs(start(maxTSS)-start(most5pTSS))<=10) #2227 are within 10bp of eachother 
+sum(abs(start(maxTSS)-start(most5pTSS))<=10) #2227 are within 10bp of eachother
 #2428 are within 20 bp of eachother
 #2788 are within 50 bp of eachother
 #2826 are within 100 bp of eachother
@@ -404,35 +381,35 @@ sum(abs(start(maxTSS)-start(most5pTSS))<=10) #2227 are within 10bp of eachother
 # get sequences for all TSSs that are identical in all datasets
 perfectTSS<-fastaFromGR(granges(highConfidence_GR),mcols(highConfidence_GR)$maxTSS,150,150,"./perfectTSS_-150_150.fa")
 
-################### no longer used ###########################
-### get upstream most TSS in between Chen and Kreus data:
-#note, because in previous script i had not re-shrunk the KreusTSSs I selected many 
-#Kreus TSS that were placed artifically upstream.
-# note, only 2037 of my wig file modes match the Chen et al. "modePosition" call in the paper
-
-# get index for genes on each strand
-fwStrand<-which(strand(ChenTSS_ol1)=="+")
-rcStrand<-which(strand(ChenTSS_ol1)=="-")
-
-# get most upstream TSS (depending on strand)
-mostUpstreamTSS<-rep(0,length(ChenTSS_ol1))
-#create DF with both TSSs:
-bothTSS<-data.frame("ChenTSS"=mcols(ChenTSS_ol1)$modePosition,
-                    "KreusTSS"=start(KreusTSS_ol1))
-mostUpstreamTSS[fwStrand]<-apply(bothTSS,1,min,na.rm=TRUE)[fwStrand]
-mostUpstreamTSS[rcStrand]<-apply(bothTSS,1,max,na.rm=TRUE)[rcStrand]
-
-ConsensusTSS<-GRanges(seqnames=seqnames(ChenTSS_ol1), 
-                      ranges=IRanges(start=mostUpstreamTSS,
-                                     end=mostUpstreamTSS),
-                      strand=strand(ChenTSS_ol1))
-
-mcols(ConsensusTSS)<-cbind(mcols(KreusTSS_ol1),
-                           mcols(ChenTSS_ol1)[,c("modePosition",
-                                                 "assignmentType",
-                                                 "assignedGeneName")])
-
-#2829 confirmed similar TSSs
-saveRDS(ConsensusTSS,"confirmedTSS_Chen&Kreus_WS235.Rds")
-export(ConsensusTSS,"confirmedTSS_Chen&Kreus_WS235.gff",format="gff",version="3")
-export(ConsensusTSS,"confirmedTSS_Chen&Kreus_WS235.bed",format="bed")
+# ################### no longer used ###########################
+# ### get upstream most TSS in between Chen and Kreus data:
+# #note, because in previous script i had not re-shrunk the KreusTSSs I selected many
+# #Kreus TSS that were placed artifically upstream.
+# # note, only 2037 of my wig file modes match the Chen et al. "modePosition" call in the paper
+#
+# # get index for genes on each strand
+# fwStrand<-which(strand(ChenTSS_ol1)=="+")
+# rcStrand<-which(strand(ChenTSS_ol1)=="-")
+#
+# # get most upstream TSS (depending on strand)
+# mostUpstreamTSS<-rep(0,length(ChenTSS_ol1))
+# #create DF with both TSSs:
+# bothTSS<-data.frame("ChenTSS"=mcols(ChenTSS_ol1)$modePosition,
+#                     "KreusTSS"=start(KreusTSS_ol1))
+# mostUpstreamTSS[fwStrand]<-apply(bothTSS,1,min,na.rm=TRUE)[fwStrand]
+# mostUpstreamTSS[rcStrand]<-apply(bothTSS,1,max,na.rm=TRUE)[rcStrand]
+#
+# ConsensusTSS<-GRanges(seqnames=seqnames(ChenTSS_ol1),
+#                       ranges=IRanges(start=mostUpstreamTSS,
+#                                      end=mostUpstreamTSS),
+#                       strand=strand(ChenTSS_ol1))
+#
+# mcols(ConsensusTSS)<-cbind(mcols(KreusTSS_ol1),
+#                            mcols(ChenTSS_ol1)[,c("modePosition",
+#                                                  "assignmentType",
+#                                                  "assignedGeneName")])
+#
+# #2829 confirmed similar TSSs
+# saveRDS(ConsensusTSS,"confirmedTSS_Chen&Kreus_WS235.Rds")
+# export(ConsensusTSS,"confirmedTSS_Chen&Kreus_WS235.gff",format="gff",version="3")
+# export(ConsensusTSS,"confirmedTSS_Chen&Kreus_WS235.bed",format="bed")

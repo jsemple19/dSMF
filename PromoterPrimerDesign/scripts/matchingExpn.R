@@ -2,9 +2,9 @@
 # 2016-12-20
 # matchingExpn.R
 # takes list of genes for which primers were designed on X chr and assigns them to quantiles of
-# L3 gene expression in order to match to autosomal genes 
+# L3 gene expression in order to match to autosomal genes
 
-setwd("/home/jenny/Documents/MeisterLab/dSMF/PromoterPrimerDesign/scripts")
+setwd("~/Documents/MeisterLab/dSMF/PromoterPrimerDesign/scripts")
 
 #read in genes selected from ChrX
 chosenX<-read.csv("./XdcPrimers/DM_DE_promoter_test_primers_WS250_subset.csv",header=TRUE,stringsAsFactors=FALSE)
@@ -24,15 +24,15 @@ wormG<-read.csv("../../expressionMatching/Gene_expression_Gerstein_combined.csv"
 sum(is.na(wormG$Gene))
 
 #convert gene names to wb gene ids
-source("/home/jenny/Documents/MeisterLab/GenomeVer/geneNameConversion/convertingGeneNamesFunction1.R")
+source("~/Documents/MeisterLab/GenomeVer/geneNameConversion/convertingGeneNamesFunction1.R")
 conversionTable<-convertGeneNames(wormG$Gene,inputType="seqID")
 
-
-i<-match(conversionTable$seqID,wormG$Gene)
+#add gene name annotation to wormG
+i<-match(wormG$Gene,conversionTable$seqID)
 wormG<-cbind(conversionTable[i,],wormG)
 
-j<-sum(rowSums(is.na(conversionTable))>0)
-
+#remove lines where gene names are NA (often deprcated/merged genes)
+i<-which(rowSums(is.na(wormG[,1:3]))>0)
 wormG<-wormG[-i,]
 
 
@@ -50,11 +50,11 @@ ranksX<-sapply(chosenXexpn$L3_N2_L3.1,function(x) {max(which(x>qt))})
 #look at the distribution
 table(ranksX)
 ######old:
-#decile:          3  4  5  6  7  8  9 10 
+#decile:          3  4  5  6  7  8  9 10
 #number of genes: 4  5  4 12  7  5  3  8
 ######new:
-# decile:         3  4  5  6  7  8  9 10 
-#number of genes: 2  4  5  8  8  3  2 16 
+# decile:         3  4  5  6  7  8  9 10
+#number of genes: 2  4  5  8  8  3  2 16
 
 x<-barplot(table(ranksX),xlab="quantile of gene expression",ylab="number of genes",ylim=c(0,17),
            main="Distribution in expression quantiles of chosen X chromosome genes")
@@ -73,11 +73,11 @@ ranksA<-sapply(chosenAexpn$L3_N2_L3.1,function(x) {max(which(x>qt))})
 #look at the distribution
 table(ranksA)
 ############old:
-#decile:            -Inf  1    2    3    4    5    6    7    8    9   10 
-#number of genes:     7   13   36   40   67   90  124  144  199  192  236 
+#decile:            -Inf  1    2    3    4    5    6    7    8    9   10
+#number of genes:     7   13   36   40   67   90  124  144  199  192  236
 ###########new:
-#decile:           -Inf    1    2    3    4    5    6    7    8    9   10 
-#number of genes:    14   29   51   48   93  111  151  172  233  257  352 
+#decile:           -Inf    1    2    3    4    5    6    7    8    9   10
+#number of genes:    14   29   51   48   93  111  151  172  233  257  352
 
 x<-barplot(table(ranksA)[2:11],xlab="quantile of gene expression",ylab="number of genes",
            ylim=c(0,375),main="Distribution in expression quantiles of autosomal genes with primers")
@@ -170,8 +170,8 @@ primerData<-rbind(cbind("chr"=rep("chrX",48),"strand"=chosenX$strand,chosenX[,4:
 
 primerData<-cbind(primerData,"location"=unlist(lapply(sapply(primerData$Amplicon,strsplit,":"),'[[',1)))
 table(primerData$location)
-#chrI  chrII chrIII  chrIV   chrV   chrX 
-#7      9      6     10     16     48 
+#chrI  chrII chrIII  chrIV   chrV   chrX
+#7      9      6     10     16     48
 
 ######### WRONG!!! orientation is which strand of DNA is amplified from DNA after BS
 table(primerData$orientation,primerData$chr)
@@ -182,22 +182,22 @@ table(primerData$orientation,primerData$chr)
 #names(mm)<-c("wormbase_gene","chr","dataset","expression")
 #ggplot(mm,aes(x=chr,y=log2(expression),fill=chr)) + geom_boxplot() + facet_wrap(~dataset,nrow=2)
 mm=melt(primerData[,c(1,2,7:17)],id=c("NameFromBEDfile","chr"))
-ggplot(mm,aes(x=chr,y=value,fill=chr)) + geom_boxplot() + 
+ggplot(mm,aes(x=chr,y=value,fill=chr)) + geom_boxplot() +
     facet_wrap(~variable,scales="free")
 
 mm=melt(primerData[,c(1,2,9:17)],id=c("NameFromBEDfile","chr"))
-ggplot(mm,aes(value,fill=chr)) + geom_histogram() + 
+ggplot(mm,aes(value,fill=chr)) + geom_histogram() +
   facet_wrap(~chr+variable,scales="free",nrow=2)
 
 dev.off()
 
 table(primerData$FwC.covered+primerData$RvC.covered)
-#0  1  2  3  4  5  6  7  8  9 10 
-#6  8 18 12 22 11  7  5  4  1  2 
+#0  1  2  3  4  5  6  7  8  9 10
+#6  8 18 12 22 11  7  5  4  1  2
 
 primerTable<-data.frame("primerNames"=c(paste0("X",1:48,"_f"),paste0("A",1:48,"_f"), paste0("X",1:48,"_r"), paste0("A",1:48,"_r")),
       "seq"=c(primerData$Fwseq,primerData$Rvseq))
-      
+
 write.csv(primerTable,"primerSeqs2order.csv",row.names=FALSE,quote=FALSE)
 
 
@@ -314,7 +314,7 @@ amplicons$dosageComp[grep("_dc",amplicons$fragID)]<-"dc"
 
 #y<-readRDS("GRangesOfAmplicons.RDS")
 
-### create BED file 
+### create BED file
 amplicons.bed<-data.frame(chrom=chr,chromStart=start,chromEnd=end,name=amplicons$Gene_WB_ID,score=".",
                           strand=orientation)
 write.table(amplicons.bed,file="amplicons.bed", sep="\t",row.names=FALSE,col.names=FALSE,quote=FALSE)

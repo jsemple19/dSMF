@@ -48,7 +48,6 @@ hist(expnTissues$larvalTissues,breaks=11,col="grey")
 
 plot(jitter(expnTissues$allTissues),jitter(expnTissues$larvalTissues),pch=16,col="#0000ff33")
 
-
 ###########3### what about house keeping genes?############################
 dataFiles<-list.files("../Spencer2011/",pattern="*.txt",recursive=TRUE)
 #take tissue data that has been filtered by whole animal reference level
@@ -89,7 +88,7 @@ i<-which(expnHK$WBgeneID %in% HKgenes)
 expnHK<-expnHK[i,]
 
 #sample(expnHK$WBgeneID,10)
-#looked at 10 manually. two were very HK (e.g. WBGene00015156), many of others had much weaker expn and 
+#looked at 10 manually. two were very HK (e.g. WBGene00015156), many of others had much weaker expn and
 #expn in particular stage more than other (some dauer, some emb, some L3). but the fact that it caught some
 #genuinely widely expressed genes shows that housekeeping genes are no properly included
 
@@ -102,3 +101,8 @@ expnBreadth<-rbind(expnTissues,expnHK)
 sum(duplicated(expnBreadth$WBgeneID))
 dim(expnBreadth)
 #19912 genes
+#in total 25 tissues
+#11 larval tissues
+
+saveRDS(expnBreadth,"tissueExpressionBreadth.RDS")
+write.csv(expnBreadth,file="tissueExpressionBreadth.csv",quote=FALSE,row.names=FALSE)
