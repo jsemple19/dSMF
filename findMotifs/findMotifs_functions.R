@@ -160,3 +160,4 @@ searchAmplicons4pwm<-function(amplicons,ampMeta,pwm,relTSS,expectedPos,rc=TRUE,p
 
 
 #################################################################
+

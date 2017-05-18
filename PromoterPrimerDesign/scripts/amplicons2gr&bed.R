@@ -33,9 +33,28 @@ amplicons.bed<-data.frame(chrom=chr,chromStart=start,chromEnd=end,name=amplicons
 write.table(amplicons.bed,file="amplicons_stranded.bed", sep="\t",row.names=FALSE,col.names=FALSE,quote=FALSE)
 
 
+##### get seqs and create DNAstring object
+
+GRamplicons<-readRDS("GRangesOfAmplicons.RDS")
+mcols(GRamplicons)<-data.frame(chr=as.character(seqnames(GRamplicons)),start=start(GRamplicons),
+                              end=end(GRamplicons), strand=as.character(strand(GRamplicons)),
+                              mcols(GRamplicons))
+library("BSgenome.Celegans.UCSC.ce11")
+ampliconSeqs<-getSeq(BSgenome.Celegans.UCSC.ce11,GRamplicons)
+mcols(ampliconSeqs)<-mcols(GRamplicons)
+names(ampliconSeqs)<-mcols(GRamplicons)$Gene_WB_ID
+
+saveRDS(ampliconSeqs,"ampliconsSeqs.RDS")
 
 
+######### create GR of amplicon TSSs
+setwd("~/Documents/MeisterLab/dSMF/PromoterPrimerDesign/scripts")
+amplicons<-read.csv("finalChosenList_tss_dc_tissues.csv",stringsAsFactors=FALSE)
 
+GRamplicons<-readRDS("GRangesOfAmplicons.RDS")
 
+GRampTSS<-GRamplicons
+start(GRampTSS)<-mcols(GRamplicons)$maxTSS
+end(GRampTSS)<-mcols(GRamplicons)$maxTSS
 
-
+saveRDS(GRampTSS,"GRampliconTSS.RDS")
