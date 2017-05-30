@@ -21,7 +21,7 @@ library(GenomicRanges)
 GRamplicons<-GRanges(seqnames=chr,ranges=IRanges(start=start,end=end),strand=strand,
                      mcols=metadata)
 names(mcols(GRamplicons))<-gsub("mcols.","",names(mcols(GRamplicons)))
-
+names(GRamplicons)<-mcols(GRamplicons)$Gene_WB_ID
 saveRDS(GRamplicons,"GRangesOfAmplicons.RDS")
 
 ################################333
@@ -58,3 +58,4 @@ start(GRampTSS)<-mcols(GRamplicons)$maxTSS
 end(GRampTSS)<-mcols(GRamplicons)$maxTSS
 
 saveRDS(GRampTSS,"GRampliconTSS.RDS")
+export.bed(GRampTSS,"ampliconTSS.bed")

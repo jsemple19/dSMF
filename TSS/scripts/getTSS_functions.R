@@ -28,7 +28,7 @@ liftOverMcols<-function(myGRanges,mcolList,chainFile="/SharedDocuments/MeisterLa
   return(myGRanges)
 }
 
-  # error catching funciton for NAs when no TSS data
+  # error catching function for NAs when no TSS data
 getStartTSS<-function(modes,dataName) {
    result<-tryCatch(
    {

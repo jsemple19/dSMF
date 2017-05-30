@@ -1,3 +1,6 @@
+library(Gviz)
+source("~/Documents/MeisterLab/dSMF/usefulFunctions.R")
+
 
 designT=read.csv('~/Documents/MeisterLab/dSMF/PromoterPrimerDesign/scripts/finalChosenList_tss_dc_tissues.csv',
                  stringsAsFactors=FALSE,header=TRUE)
@@ -40,21 +43,48 @@ getMethMatrix<-function(amplicons,designT,ampNum,proj,sampleName,genome=Celegans
    onlyCG_GC<-getGCMatrix(allCs,chr=chr,genome=genome,conv.rate=80,destrand=FALSE)
    mCG_GC<-mergeGC_CGmat(onlyCG_GC)
    #reads<-dim(mCG_GC)[1]
-   mCG_GC.o<-mCG_GC[hclust(dist(mCG_GC,))$order,]
+   mCG_GC.o<-mCG_GC[hclust(dist(mCG_GC))$order,]
    return(mCG_GC.o)
 }
 
-a<-getMethMatrix(amplicons, designT,84,NOMEproj,"N2_DE_ampV001")
+
+MethMat2gr<-function(mat,amplicon) {
+   Cpos<-as.numeric(colnames(mat))
+   gr<-GRanges(seqnames=seqnames(amplicon),ranges=IRanges(start=Cpos,width=1),strand=strand(amplicon))
+   mcols(gr)<-DataFrame(t(mat))
+   return(gr)
+}
+
+i=40
+a<-getMethMatrix(amplicons, designT,i,NOMEproj,"N2_DE_ampV001")
+amplicon.wb<-ucsc2wb(amplicon)
+agr<-MethMat2gr(a,amplicon.wb)
+#image(t(a),axes=FALSE,col=grey(seq(0,0.8,length=2)),ylab="molecule",
+#      xlab="methylation site")
 
 
-image(t(a),axes=FALSE,col=grey(seq(0,0.8,length=2)),ylab="molecule",
-      xlab="methylation site")  
-
-
-
+library(Gviz)
 # #plotting heatmaps in Gviz
-hmtest<-saitoFbw 
-mcols(hmtest)<-DataFrame(r1=rbinom(36750,1,0.5),r2=rbinom(36750,1,0.5), r3=rbinom(36750,1,0.5), r4=rbinom(36750,1,0.5), r5=rbinom(36750,1,0.5))
-dtrack7<-DataTrack(range=hmtest,type=c("heatmap"), gradient=c("black","grey"),ncolor=3)
+dtrack<-DataTrack(range=agr,type=c("heatmap"), gradient=c("grey","black"), ncolor=3)
 # plotTracks(list(gtrack,atrack,dtrack1,dtrack3,dtrack5,dtrack7),chromosome=seqnames(maxol[i]),
 #            from=start(maxol[i]),to=end(maxol[i]))
+gtrack<-GenomeAxisTrack()
+options(ucscChromosomeNames=FALSE)
+amplicon<-amplicons[i]
+amplicon.wb<-ucsc2wb(amplicon)
+st=ucsc2wb(tss[i])
+atrack<-AnnotationTrack(range=st)
+
+# txdb<-makeTxDbFromGFF("../../../GenomeVer/annotations/c_elegans.PRJNA13758.WS250.annotations.gff3")
+txTr<-GeneRegionTrack(txdb,showFeatureId=TRUE,name="txdb")
+
+pdf("./gvizMethPlots",paper="a4r",height=8,width=11)
+plotTracks(list(gtrack,dtrack),
+            chromosome=seqnames(amplicon.wb),from=start(amplicon.wb),to=end(amplicon.wb))
+
+dev.off()
+# error message:
+#Error in .local(GdObject, ...) :
+#   Too many stacks to draw. Either increase the device size or limit the drawing to a smaller region.
+
+#need to plot Arnaud's way
