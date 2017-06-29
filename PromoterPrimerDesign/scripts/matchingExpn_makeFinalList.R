@@ -12,7 +12,9 @@ chosenX<-chosenX[chosenX$finalSelected=="y",]
 names(chosenX)[6]<-"orientation"
 
 library(GenomicFeatures)
-#txdb<-makeTxDbFromGFF("../../../GenomeVer/annotations/c_elegans.PRJNA13758.WS250.annotations.gff3")
+if(!exists("txdb")) {
+   txdb<-makeTxDbFromGFF("../../../GenomeVer/annotations/c_elegans.PRJNA13758.WS250.annotations.gff3")
+}
 genes<-genes(txdb)
 genes<-genes[mcols(genes)$gene_id %in% chosenX$Gene_WB_ID,]
 i<-match(chosenX$Gene_WB_ID,mcols(genes)$gene_id)
@@ -86,7 +88,7 @@ amplicons$dosageComp[grep("_dc",amplicons$fragID)]<-"dc"
 
 
 #load TSS data
-TSS<-read.table("~/Documents/MeisterLab/dSMF/TSS/scripts/ChenKreusSaitoTSS_2827.txt",stringsAsFactors=FALSE)
+TSS<-read.table("~/Documents/MeisterLab/dSMF/TSS/scripts/ChenKreusSaitoTSS_2827_maxTSS.txt",stringsAsFactors=FALSE)
 colnames(TSS)<-c("WBGeneID","chr","start","end","strand","chenTSS","kruesiTSS","saitoTSS","maxTSS", "most5p")
 
 i<-match(amplicons$Gene_WB_ID,TSS$WBGeneID)
@@ -98,12 +100,15 @@ library(GenomicFeatures)
 library(genomation)
 library(GenomicRanges)
 library(rtracklayer)
-#txdb<-makeTxDbFromGFF("../../../GenomeVer/annotations/c_elegans.PRJNA13758.WS250.annotations.gff3")
+if(!exists("txdb")) {
+   txdb<-makeTxDbFromGFF("../../../GenomeVer/annotations/c_elegans.PRJNA13758.WS250.annotations.gff3")
+}
 genes<-genes(txdb)
 genes<-genes[mcols(genes)$gene_id %in% amplicons$Gene_WB_ID,]
 
 i<-match(amplicons$Gene_WB_ID,mcols(genes)$gene_id)
 
+amplicons$maxTSS<-as.numeric(amplicons$maxTSS)
 amplicons$TSSwb<-ifelse(strand(genes[i])=="+",start(genes[i]),end(genes[i]))
 #test start positions
 sum(ifelse(amplicons$strand=="+",amplicons$TSSwb-amplicons$maxTSS,amplicons$maxTSS-amplicons$TSSwb)<0)
@@ -206,7 +211,7 @@ barplot(table(numTissuesAmplicons),main="Number of tissues - Amplicons",
 barplot(table(numTissuesOthers),main="Number of tissues - OtherGenes",
         xlab="number of tissues",ylab="number of genes")
 
-amplicons<-cbind(amplicons,Gersetin3unique=numTissuesAmplicons)
+amplicons<-cbind(amplicons,Gerstein3unique=numTissuesAmplicons)
 
 ######### read in Spencer2012 expn breadth data
 expnBreadth<-readRDS("../../tissueExpn/scripts/tissueExpressionBreadth.RDS")
@@ -263,7 +268,7 @@ barplot(table(allExpnBreadth$allTissues),main="All tissues (Spencer) - OtherGene
 dev.off()
 
 amplicons<-cbind(amplicons,SpencerLarval11=ampExpnBreadth$larvalTissues,
-      SpencerAll25=ampExpnBreadth$allTissues)
+      SpencerAll25=ampExpnBreadth$allTissues,fromUnfilt=ampExpnBreadth$fromUnfilt)
 
 write.csv(amplicons,"finalChosenList_tss_dc_tissues.csv",quote=FALSE,row.names=FALSE)
 #######################
